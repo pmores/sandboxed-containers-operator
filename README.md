@@ -1,3 +1,5 @@
+**If you're using Openshift 4.5.x or 4.6.x please use this [README](https://github.com/openshift/kata-operator/blob/release-4.6/README.md)**
+
 # Kata Operator
 
 An operator to perform lifecycle management (install/upgrade/uninstall) of [Kata Runtime](https://katacontainers.io/) on Openshift as well as Kubernetes cluster.

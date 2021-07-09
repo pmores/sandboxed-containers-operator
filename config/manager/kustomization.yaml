@@ -4,5 +4,4 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
 - name: controller
-  newName: quay.io/openshift_sandboxed_containers/openshift-sandboxed-containers-operator
-  newTag: latest
+  newName: quay.io/pmores/kata-operator

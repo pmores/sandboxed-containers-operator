@@ -16,7 +16,7 @@ metadata:
     operators.operatorframework.io/builder: operator-sdk-v1.2.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
     operatorframework.io/suggested-namespace: openshift-sandboxed-containers-operator
-  name: sandboxed-containers-operator.v1.0.0
+  name: sandboxed-containers-operator.v1.0.3
 spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
@@ -25,6 +25,10 @@ spec:
       name: kataconfigs.kataconfiguration.openshift.io
       description: The kataconfig CR represent a installation of Kata in a cluster and its current state.
       version: v1
+    required:
+    - kind: Certificate
+      name: certificates.cert-manager.io
+      version: v1alpha2
   displayName: Sandboxed Containers Operator
   description: An operator to perform lifecycle management (install/upgrade/uninstall) of Sandboxed Containers Runtime on Openshift as well as Kubernetes cluster
   icon:
@@ -163,7 +167,7 @@ spec:
                 - --enable-leader-election
                 command:
                 - /manager
-                image: registry-proxy.engineering.redhat.com/rh-osbs/openshift-sandboxed-containers-operator:1.0.0-5
+                image: quay.io/pmores/kata-operator
                 imagePullPolicy: Always
                 name: manager
                 resources:
@@ -223,7 +227,7 @@ spec:
         serviceAccountName: default
     strategy: deployment
   installModes:
-  - supported: true
+  - supported: false
     type: OwnNamespace
   - supported: true
     type: SingleNamespace
@@ -243,4 +247,4 @@ spec:
   provider:
     name: Red Hat
     url: https://www.github.com/openshift/sandboxed-containers-operator
-  version: 1.0.0 
+  version: 1.0.3

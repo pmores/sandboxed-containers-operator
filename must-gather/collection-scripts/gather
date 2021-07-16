@@ -39,4 +39,7 @@ done
 # Collect sandboxed-containers details
 /usr/bin/gather_sandboxed_containers_logs
 
+# Collect operator details
+/usr/bin/gather_operator
+
 exit 0

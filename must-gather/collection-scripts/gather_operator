@@ -1,0 +1,29 @@
+#!/bin/bash
+
+BASE_COLLECTION_PATH="/must-gather"
+OSC_PATH=${BASE_COLLECTION_PATH}/sandboxed-containers/operator
+mkdir -p ${OSC_PATH}
+
+/usr/bin/oc describe csv -n openshift-sandboxed-containers-operator > ${OSC_PATH}/csv
+/usr/bin/oc describe subscription -n openshift-sandboxed-containers-operator > ${OSC_PATH}/subscription
+
+deploymentUnits=(pods deployments statefulsets deploymentconfigs)
+
+for deploymentUnit in "${deploymentUnits[@]}"; do
+	echo "$deploymentUnit using kata runtime class still running:"
+
+	/usr/bin/oc get $deploymentUnit -A -o json | jq -r '.items[] | select(.spec.runtimeClassName | test("kata")).metadata.name' 2>/dev/null > ${OSC_PATH}/${deploymentUnit}
+
+done
+
+# NOTE Jul 16, 2021: mostly for webhook debugging. There are no services other
+# than the webhook one expected in the namespace as of this writing.  If any
+# are added later on it surely won't hurt to have them recorded as well.
+/usr/bin/oc get services -n openshift-sandboxed-containers-operator -o yaml > ${OSC_PATH}/services
+
+# NOTE Jul 16, 2021: as with services above, a single one is expected as of
+# this writing, with more possibly being added in the future
+KATA_WEBHOOK_CONFIGS=$(/usr/bin/oc get validatingwebhookconfigurations -A -o'custom-columns=name:metadata.name' --no-headers | grep kata)
+/usr/bin/oc get validatingwebhookconfigurations ${KATA_WEBHOOK_CONFIGS} -o yaml > ${OSC_PATH}/validatingwebhookconfigurations
+
+exit 0

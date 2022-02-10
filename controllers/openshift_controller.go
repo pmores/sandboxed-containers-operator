@@ -190,6 +190,11 @@ func makeContainerRuntimeConfig(desiredLogLevel string, mcpSelector *metav1.Labe
 
 func (r *KataConfigOpenShiftReconciler) processLogLevel(desiredLogLevel string) error {
 
+	if desiredLogLevel == "" {
+		r.Log.Info("desired logLevel value is empty, setting to default ('info')")
+		desiredLogLevel = "info"
+	}
+
 	ctrRuntimeCfg := &mcfgv1.ContainerRuntimeConfig{}
 	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: container_runtime_config_name}, ctrRuntimeCfg)
 	if err != nil {
@@ -199,6 +204,15 @@ func (r *KataConfigOpenShiftReconciler) processLogLevel(desiredLogLevel string) 
 		}
 
 		r.Log.Info("no existing ContainerRuntimeConfig found")
+
+		if desiredLogLevel == "info" {
+			// if there's no ContainerRuntimeConfig - meaning that logLevel
+			// wasn't set yet and thus is at the default value in the cluster -
+			// *and* the desired value is the default one as well, there's
+			// nothing to do
+			r.Log.Info("current and desired logLevel values are both default, no action necessary")
+			return nil
+		}
 
 		machineConfigPoolSelectorLabels := map[string]string{"crio-conf": ""}
 		isConvergedCluster, err := r.checkConvergedCluster()

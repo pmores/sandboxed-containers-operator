@@ -41,7 +41,7 @@ type KataConfigSpec struct {
 
 	// Sets log level on kata-equipped nodes.  Valid values are the same as for `crio --log-level`.
 	// +kubebuilder:default:="info"
-	LogLevel string `json:"logLevel"`
+	LogLevel string `json:"logLevel,omitempty"`
 }
 
 // KataConfigStatus defines the observed state of KataConfig

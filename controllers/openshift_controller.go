@@ -214,7 +214,7 @@ func (r *KataConfigOpenShiftReconciler) processLogLevel(desiredLogLevel string) 
 			return nil
 		}
 
-		machineConfigPoolSelectorLabels := map[string]string{"crio-conf": ""}
+		machineConfigPoolSelectorLabels := map[string]string{"pools.operator.machineconfiguration.openshift.io/kata-oc": ""}
 		isConvergedCluster, err := r.checkConvergedCluster()
 		if isConvergedCluster && err == nil {
 			machineConfigPoolSelectorLabels = map[string]string{"pools.operator.machineconfiguration.openshift.io/master": ""}
@@ -410,7 +410,12 @@ func (r *KataConfigOpenShiftReconciler) newMCPforCR() (*mcfgv1.MachineConfigPool
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "kata-oc",
 			Labels: map[string]string{
-				"crio-conf": "",
+				// This label is added to make it possible to form a label
+				// selector that selects this MCP.  One use case is the
+				// ContainerRuntimeConfig resource which selects MCPs based
+				// on labels and is used to implement KataConfig.spec.logLevel
+				// handling.
+				"pools.operator.machineconfiguration.openshift.io/kata-oc": "",
 			},
 		},
 
